@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "productId": "prd_mtsxj1jj-4455082d",
+  "slug": "juguete-pajaro-gato-1005009738365119",
+  "lineage": "scraped",
+  "sourceUrl": "https://es.aliexpress.com/item/1005009738365119.html",
+  "itemId": null,
+  "siteUrl": null,
+  "source": {
+    "provider": "aliexpress",
+    "externalProductId": "1005009738365119",
+    "canonicalUrl": "https://es.aliexpress.com/item/1005009738365119.html"
+  },
+  "productName": "Juguete Interactivo para Gatos, Pájaro Volador Recargable con Sonido y Movimiento (sin volar), con Catnip, Juguete de Peluche Activado por Tacto",
+  "productDisplayName": "Juguete Interactivo para Gatos",
+  "commerce": {
+    "mode": "preview",
+    "shopifyHandle": null
+  },
+  "jobs": {
+    "scrape": null,
+    "content": null,
+    "generate": null
+  },
+  "timestamps": {
+    "scrapedAt": "2026-09-08T17:14:46.686Z",
+    "contentAt": "2026-09-08T17:15:22.320Z",
+    "generatedAt": "2026-09-08T17:15:22.790Z"
+  },
+  "assets": [
+    {
+      "src": "img_0.webp",
+      "dest": "product-01.webp",
+      "bytes": 90310,
+      "sha256": "dbbf5518f8e525ce8657290c8058420a89d7c4972e0a189b2807b37727f05a2b"
+    },
+    {
+      "src": "img_1.webp",
+      "dest": "product-02.webp",
+      "bytes": 152362,
+      "sha256": "60187496a7ac8615a565cb45bf3b3e9cad2f5c7ee5ec620f5ed9a86af1ff2840"
+    },
+    {
+      "src": "img_2.webp",
+      "dest": "product-03.webp",
+      "bytes": 114426,
+      "sha256": "5eaf8b37e9f3570f6f3df17a3481adb25400578ff4127aebcea942fb44825c0b"
+    },
+    {
+      "src": "img_3.webp",
+      "dest": "product-04.webp",
+      "bytes": 44124,
+      "sha256": "70845f608b432fac8f24e002b673ad9dab7a6b800a9b7f75dd74fc16094c2c78"
+    },
+    {
+      "src": "img_4.webp",
+      "dest": "product-05.webp",
+      "bytes": 59608,
+      "sha256": "9479151b40b1bc47f7b5c7957b29793437642972871a01505ce60a4f3e03334f"
+    },
+    {
+      "src": "img_5.webp",
+      "dest": "product-06.webp",
+      "bytes": 80348,
+      "sha256": "0558bf9c29e276244036572dc07cdbb15fff1b3d71771af5560068047a1c1954"
+    },
+    {
+      "src": "img_6.webp",
+      "dest": "product-07.webp",
+      "bytes": 28676,
+      "sha256": "b5a8e0c48cf62267c03ff965eaf51a188dbaa4389116087efe1ba532e1439086"
+    }
+  ],
+  "assetsSourceDir": "/Users/gbritez/Desktop/dev/landing-generator/admin/.jobs/mtsxj1jk-06de563d/scrape/images",
+  "assetsUnmatched": [],
+  "template": {
+    "dir": "content/landing-astravibe",
+    "commit": "fb996c0"
+  },
+  "generator": {
+    "script": "scripts/generate-landing.mjs",
+    "schema": 1
+  },
+  "flags": {
+    "force": true
+  }
+}

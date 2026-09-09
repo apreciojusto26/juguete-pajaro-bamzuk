@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo";
+@import "@fontsource-variable/inter";
+
+@theme {
+  --color-bone:        #FAF3E1;
+  --color-bone-dim:    #EFE6D0;
+  --color-graphite:    #2C2C2C;
+  --color-graphite-soft:#3A3A3A;
+  /* The supplied sage is too light for body copy on cream, so `steel` is its
+     accessible text derivative; `steel-light` keeps the canonical swatch. */
+  --color-steel:       #58664C;
+  --color-steel-light: #7D8F69;
+  --color-grape:        #1A531A;
+  --color-grape-dark:   #124312;
+  --color-grape-tint:   #EDF3E8;
+  --color-grape-deep:   #0F370F;
+  --color-grape-soft:   #A5B494;
+  --color-gold:        #FFC145;
+  /* Dark yellow is reserved for meaningful foregrounds; canonical yellow is
+     decorative because it only reaches 1.62:1 against white. */
+  --color-gold-deep:   #8A5A00;
+  --color-gold-tint:   #FFF2CF;
+  /* Positive outcomes now share the brand green, with an independent semantic
+     alias so success states remain easy to change later. */
+  --color-success:      #1A531A;
+  --color-success-tint: #EDF3E8;
+  --color-surface:     #FFFFFF;
+
+  --font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.18em;
+  --text-display: 2rem;
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.02em;
+  --text-hero: 2.5rem;
+  --text-hero--line-height: 1.03;
+  --text-hero--letter-spacing: -0.03em;
+
+  --radius-card: 1.5rem;
+  --radius-tile: 1rem;
+  --radius-pill: 999px;
+
+  --shadow-card:   0 2px 10px -3px rgb(44 44 44 / 0.10);
+  --shadow-lift:   0 14px 32px -12px rgb(44 44 44 / 0.28);
+  --shadow-sticky: 0 -8px 28px -12px rgb(44 44 44 / 0.22);
+  --shadow-ring-white: 0 0 0 4px #FFFFFF;
+
+  --breakpoint-xs: 22.5rem;
+  --animate-marquee: marquee 20s linear infinite;
+  --animate-shine: shine 3.5s linear infinite;
+  --animate-point-diagonal: point-diagonal 1.6s ease-in-out infinite;
+}
+
+@keyframes marquee { from { transform: translate3d(0,0,0);} to { transform: translate3d(-50%,0,0);} }
+@keyframes shine { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+/* Travels along its own diagonal so the motion reads as "up and to the right",
+   toward the ⋯ menu, rather than as a generic bounce. */
+@keyframes point-diagonal {
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.85; }
+  50%      { transform: translate3d(6px, -6px, 0); opacity: 1; }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { @apply bg-bone text-graphite font-sans antialiased overflow-x-hidden; }
+  h1,h2,h3 { @apply font-display font-extrabold; }
+  /* Two-colour focus indicator: green is visible on light surfaces and the
+     white ring offset stays visible on dark ones. Tailwind composes rings with
+     its shadow variables, so this does not replace permanent component shadows. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-grape ring-2 ring-grape ring-offset-2 ring-offset-surface;
+  }
+
+  /* Cursor pointer en todo lo clickeable. :disabled excluido — esos ya usan
+     cursor-not-allowed en sus clases. `label:has(...)` cubre los labels que
+     ENVUELVEN un radio/checkbox (sin atributo for, patrón del buy box);
+     `label[for]` cubre los que apuntan por id. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  [role="tab"]:not(:disabled),
+  [role="link"]:not(:disabled),
+  [role="checkbox"]:not(:disabled),
+  [role="radio"]:not(:disabled),
+  [role="switch"]:not(:disabled),
+  a[href],
+  summary,
+  select,
+  label[for],
+  label:has(> input[type="checkbox"]),
+  label:has(> input[type="radio"]),
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+}

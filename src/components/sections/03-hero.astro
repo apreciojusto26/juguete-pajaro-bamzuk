@@ -1,0 +1,83 @@
+---
+import Container from '@/components/ui/Container.astro';
+import { HeroCarousel } from '@/components/islands/HeroCarousel';
+import { product } from '@/data/product';
+import { getProductCommerce } from '@/lib/shopify/catalog';
+import { resolveMediaList, resolveShopifyImages } from '@/lib/resolve-media';
+
+const commerce = await getProductCommerce();
+
+const catalogueImages =
+  commerce.images.length > 0
+    ? resolveShopifyImages(commerce.images, 'gallery')
+    : await resolveMediaList(product.gallery, 'gallery');
+
+// Own photos and clips go last: the Shopify catalogue shots are the clean
+// studio ones a buyer expects first, and these are the proof shots.
+const extras = await resolveMediaList([...product.heroExtras], 'extra');
+const resolvedImages = [...catalogueImages, ...extras];
+---
+
+<section class="min-w-0 bg-white pb-6 pt-0">
+  <Container>
+    <div class="-mx-5 md:mx-auto md:max-w-[42rem] xl:max-w-[40rem]">
+      {/*
+        `client:load`, not `client:visible`. This is the hero — it is ALWAYS
+        in the initial viewport, so an IntersectionObserver-gated hydration
+        buys nothing here and only adds the observer's own setup-and-first-
+        callback latency before the arrows and dots start responding. Astro's
+        own guidance reserves `client:visible` for islands genuinely below the
+        fold; a carousel that is the first thing on the page is the case
+        `client:load` exists for.
+      */}
+      <HeroCarousel client:load images={resolvedImages} />
+
+      <div class="mt-5 px-5 text-center md:px-0">
+        {/*
+          Leads with the differentiator instead of the category: any projector
+          puts stars on a ceiling, but this one swaps the scene.
+        */}
+        <h1 class="text-4xl tracking-tight md:text-5xl">
+          <span class="animate-shine bg-[linear-gradient(110deg,var(--color-grape-deep)_25%,var(--color-grape-soft)_50%,var(--color-grape-deep)_75%)] bg-[length:200%_auto] bg-clip-text text-transparent">
+            {/*
+              WAS "24 ambientes.<br />Un solo proyector." — the star projector's
+              headline, hardcoded in the template every landing is copied from.
+              A real RGB light tube shipped with it as its own H1.
+
+              `tagline` already existed and already fed <title>; it simply had
+              no consumer in the page. The <br /> stays so the element tree is
+              unchanged: only text moved.
+            */}
+            {product.tagline}<br />
+          </span>
+        </h1>
+
+        <p class="mt-3 text-base text-graphite/80 md:text-lg">
+          {/* Was the projector's own subline. `subtagline` already fed the meta
+              description and, like the tagline, rendered nowhere. */}
+          {product.subtagline}
+        </p>
+
+        <div class="mt-3 flex flex-wrap justify-center gap-2">
+          {
+            /* Scarcity claims removed: the shop holds no live stock figure, so
+               "se agota rápido" was unverifiable pressure rather than
+               information. Trust signals stay. */
+            ['Envío gratis', 'Garantía 30 días'].map((label, index) => (
+              <span
+                class:list={[
+                  'rounded-pill px-3 py-2 text-xs font-semibold shadow-card',
+                  index === 0 ? 'bg-success-tint text-success' : 'bg-grape-tint text-grape-deep',
+                ]}
+              >
+                {label}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </Container>
+
+  <div id="hero-end" class="h-px w-full" aria-hidden="true"></div>
+</section>

@@ -1,0 +1,40 @@
+---
+// The pull-quote. Renders the review BODY, its star value and a display name —
+// and nothing else, because nothing else is sourced.
+//
+// The "✓ Compra verificada" pill that used to sit under the author is gone,
+// name and all. It was not styling: CanonicalReview carries no verification
+// signal, so the badge asserted a stranger's transaction on no evidence.
+// Hiding it with CSS would have left `verified: true` in the data for the next
+// component to find, so it was removed at the type instead.
+import { testimonials } from '@/data/testimonials';
+import { reviewerDisplayName } from '@/lib/reviewer-identity';
+import Stars from '@/components/ui/Stars.astro';
+
+const featured = testimonials.find((t) => t.variant === 'quote');
+---
+
+{
+  featured && (
+    <section class="relative overflow-hidden bg-grape-tint px-5 py-12 text-center md:py-16">
+      <div class="pointer-events-none absolute -left-20 -top-24 size-64 rounded-full bg-grape-soft/20 blur-3xl" aria-hidden="true" />
+      <div class="pointer-events-none absolute -bottom-28 -right-16 size-72 rounded-full bg-gold/10 blur-3xl" aria-hidden="true" />
+
+      <div class="relative mx-auto w-full max-w-[48rem] overflow-hidden rounded-card bg-surface px-6 py-6 shadow-lift md:px-12 md:py-7">
+        <div class="relative z-10">
+          <Stars rating={featured.rating} class="justify-center" starClass="size-5" />
+
+          <p class="mx-auto mt-4 max-w-[39rem] text-[1.0625rem] leading-[1.5] text-graphite md:text-xl md:leading-relaxed">
+            {featured.body}
+          </p>
+
+          <div class="mt-5 flex items-center justify-center">
+            <div class="text-center">
+              <p class="text-sm font-bold text-graphite">{reviewerDisplayName(featured.author)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

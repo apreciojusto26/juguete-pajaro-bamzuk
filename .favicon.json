@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "source": "canonical",
+  "fingerprint": "9a94e1989fafcac6b6668404c34607c53a25444461fd5aebeba200657b6aaf3a",
+  "promptVersion": 1,
+  "files": [
+    {
+      "name": "favicon.svg",
+      "sha256": "4aa28e843b538719545e61c6e84b584fdec1768ff15aee2ced31abea6fad70db"
+    },
+    {
+      "name": "favicon.ico",
+      "sha256": "9aa6a9726b9869235b6e19af80b526f4db392adaa3622a1ef512101f72e47720"
+    }
+  ],
+  "operational": {
+    "generatedAt": null,
+    "provider": null
+  }
+}

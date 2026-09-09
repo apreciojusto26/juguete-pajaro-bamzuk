@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "palette": {
+    "bone": "#FAF3E1",
+    "bone-dim": "#EFE6D0",
+    "graphite": "#2C2C2C",
+    "graphite-soft": "#3A3A3A",
+    "steel": "#58664C",
+    "steel-light": "#7D8F69",
+    "grape": "#1A531A",
+    "grape-dark": "#124312",
+    "grape-tint": "#EDF3E8",
+    "grape-deep": "#0F370F",
+    "grape-soft": "#A5B494",
+    "gold": "#FFC145",
+    "gold-deep": "#8A5A00",
+    "gold-tint": "#FFF2CF",
+    "success": "#1A531A",
+    "success-tint": "#EDF3E8",
+    "surface": "#FFFFFF"
+  },
+  "sources": {
+    "bone": "canonical",
+    "bone-dim": "derived",
+    "graphite": "canonical",
+    "graphite-soft": "derived",
+    "steel": "derived",
+    "steel-light": "canonical",
+    "grape": "canonical",
+    "grape-dark": "derived",
+    "grape-tint": "derived",
+    "grape-deep": "derived",
+    "grape-soft": "derived",
+    "gold": "canonical",
+    "gold-deep": "derived",
+    "gold-tint": "derived",
+    "success": "derived",
+    "success-tint": "derived",
+    "surface": "canonical"
+  },
+  "contrast": [
+    { "foreground": "steel", "background": "bone", "ratio": 5.55 },
+    { "foreground": "steel", "background": "bone-dim", "ratio": 4.94 },
+    { "foreground": "steel", "background": "surface", "ratio": 6.14 },
+    { "foreground": "steel", "background": "grape-tint", "ratio": 5.43 },
+    { "foreground": "graphite", "background": "bone", "ratio": 12.62 },
+    { "foreground": "graphite", "background": "bone-dim", "ratio": 11.24 },
+    { "foreground": "graphite", "background": "surface", "ratio": 13.97 },
+    { "foreground": "graphite", "background": "grape-tint", "ratio": 12.36 },
+    { "foreground": "graphite", "background": "gold-tint", "ratio": 12.54 },
+    { "foreground": "graphite", "background": "success-tint", "ratio": 12.36 },
+    { "foreground": "graphite", "background": "gold", "ratio": 8.62 },
+    { "foreground": "bone", "background": "graphite", "ratio": 12.62 },
+    { "foreground": "surface", "background": "grape", "ratio": 9.15 },
+    { "foreground": "surface", "background": "grape-dark", "ratio": 11.43 },
+    { "foreground": "surface", "background": "grape-deep", "ratio": 13.34 },
+    { "foreground": "surface", "background": "success", "ratio": 9.15 },
+    { "foreground": "grape", "background": "grape-tint", "ratio": 8.09 },
+    { "foreground": "gold-deep", "background": "gold-tint", "ratio": 5.32 },
+    { "foreground": "gold-deep", "background": "surface", "ratio": 5.93 },
+    { "foreground": "surface", "background": "gold-deep", "ratio": 5.93 },
+    { "foreground": "gold-deep", "background": "bone", "ratio": 5.35 },
+    { "foreground": "grape-soft", "background": "graphite", "ratio": 6.35 }
+  ],
+  "adjustments": [
+    {
+      "token": "steel",
+      "canonical": "#7D8F69",
+      "applied": "#58664C",
+      "reason": "Darkened sage for WCAG AA body text on cream and white surfaces."
+    },
+    {
+      "token": "gold-deep",
+      "canonical": "#FFC145",
+      "applied": "#8A5A00",
+      "reason": "Derived foreground yellow for WCAG AA; canonical yellow is reserved for decorative fills."
+    },
+    {
+      "token": "grape-dark",
+      "canonical": "#1A531A",
+      "applied": "#124312",
+      "reason": "Darkened green for hover feedback while preserving white-text contrast."
+    },
+    {
+      "token": "grape-soft",
+      "canonical": "#7D8F69",
+      "applied": "#A5B494",
+      "reason": "Lightened sage for readable hover text on the charcoal footer."
+    }
+  ],
+  "accent": {
+    "source": "user-provided",
+    "reason": "Mascota Félix brand palette supplied by the user.",
+    "sourceAsset": "conversation attachment",
+    "providedPalette": {
+      "darkGreen": "#1A531A",
+      "sage": "#7D8F69",
+      "yellow": "#FFC145",
+      "cream": "#FAF3E1",
+      "charcoal": "#2C2C2C"
+    },
+    "appliedGrape": "#1A531A",
+    "adjustments": [
+      { "token": "grape-dark", "purpose": "hover" },
+      { "token": "steel", "purpose": "body-text-contrast" },
+      { "token": "gold-deep", "purpose": "foreground-contrast" },
+      { "token": "grape-soft", "purpose": "dark-surface-contrast" }
+    ]
+  }
+}

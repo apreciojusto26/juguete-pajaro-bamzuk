@@ -1,0 +1,104 @@
+---
+// The social-proof SUMMARY that introduces the review carousel below it.
+//
+// ─── WHAT WAS REMOVED, AND WHY IT COULD NOT STAY ──────────────────────────
+//
+// This section used to draw a five-bar rating histogram from
+// `product.ratingBreakdown` — 5★:120, 4★:4, 3★:2, 2★:1, 1★:1. Nothing ever
+// measured that distribution. CanonicalProduct publishes an average and a
+// count, and no third number; an average cannot imply a shape, because 4,9
+// over 128 reviews is satisfied by many. The bars were precision we invented.
+//
+// ─── WHY NOT CASE 1 (a breakdown counted from our own reviews) ────────────
+//
+// The rule for a legitimate histogram is that it is COUNTED from individual
+// reviews carrying real star values, describes only that sample, and never
+// extrapolates to the global count. This template's ten reviews technically
+// carry star values — and all ten are 5★, because they were CURATED from a
+// listing whose average is 4,9. Counting them would render 5★:10 and four
+// empty bars: a perfect-score distribution, sitting directly beside "4,9/5",
+// contradicting it. A selection-biased sample drawn as a distribution is a
+// second fabrication wearing arithmetic. So: no bars.
+//
+// ─── WHAT REPLACED THEM (Case 2: aggregate only) ──────────────────────────
+//
+// The section keeps its position, its outer shell, its rhythm, its container
+// width and its relationship to the carousel that follows. Only the interior
+// that depended on invented data changed: the same centred `max-w-xl` block
+// now states the two facts we actually hold — the average and how many
+// ratings it is over — with the origin disclosed, as the reviews reel does.
+// This is deliberately NOT a redesign; the canonicalization is not a licence
+// to re-style a section.
+//
+// ─── AND IT DEGRADES INSTEAD OF INVENTING (Case 3) ────────────────────────
+//
+// `ratingAverage` and `ratingCount` are nullable. With no rating there is no
+// summary to make, so the section renders NOTHING — no zeroed stars, no
+// "todavía no hay valoraciones", no empty shell implying missing content.
+// Absence of data is absence of claim.
+import Container from '@/components/ui/Container.astro';
+import Stars from '@/components/ui/Stars.astro';
+import { product } from '@/data/product';
+
+const rating = product.ratingAverage;
+const count = product.ratingCount;
+
+// Both facts are independent: a listing can publish an average without a count.
+// Each is rendered only if present, and the section only if the rating is.
+const ratingLabel = rating === null ? null : rating.toFixed(1).replace('.', ',');
+const countLabel = count === null ? null : new Intl.NumberFormat('es-ES').format(count);
+---
+
+{
+  rating !== null && (
+    <section class="bg-white pb-4 pt-12 md:pb-6 md:pt-16">
+      {/*
+        CENTRED, matching 12-guarantee.astro's own convention — the other
+        section that states a fact rather than tells a story. Left-aligning a
+        wide container under a huge heading was the actual source of "queda
+        floja": on desktop the heading spanned edge-to-edge while the rating
+        and the disclosure sat narrow and adrift beneath it, three different
+        widths with three different rhythms. Centring is not a redesign; it is
+        the alignment 12-guarantee.astro already uses for the same kind of
+        content, applied here for the same reason.
+      */}
+      <Container class="text-center">
+        {/* Was "Resultados reales" — a claim about outcomes this section has
+            no data for. It summarises ratings, so it says so. */}
+        <p class="text-eyebrow font-bold uppercase text-grape">Valoraciones</p>
+        {/* Was the hardcoded "Astra Vibe". Reads the brand now, so a generated
+            product cannot ship the template's. */}
+        <h2 class="mt-1 text-display md:text-4xl lg:text-5xl">
+          Lo que dicen de<br />{product.brand ?? product.displayName}
+        </h2>
+
+        {/*
+          THE RATING, MADE THE ANCHOR — no bars, no invented breakdown, the
+          same two facts as before (average, count), given the visual weight
+          a number this good deserves. `starClass` is Stars.astro's own,
+          already-existing sizing prop; nothing new was added to render it
+          larger. The tinted pill is `bg-grape-tint`, the same trust-tint
+          token 10-reviews-reel.astro already carries — not a new colour.
+        */}
+        <div class="mx-auto mt-5 inline-flex flex-wrap items-center justify-center gap-3 rounded-pill bg-grape-tint px-5 py-3">
+          <Stars rating={rating} starClass="size-6" />
+          <span class="text-2xl font-black leading-none text-graphite">
+            {ratingLabel}<span class="text-base font-semibold text-graphite/70">/5</span>
+          </span>
+        </div>
+
+        {/* Same fact as before, resolved as a real sentence rather than a
+            thin caption: this is the section's provenance disclosure, and it
+            deserves to be read, not skimmed past. */}
+        <div class="mx-auto mt-5 max-w-xl space-y-2">
+          {countLabel !== null && (
+            <p class="text-base leading-relaxed text-graphite/70">
+              Media de <strong class="font-semibold text-graphite">{countLabel} valoraciones</strong> de compradores
+              de este producto, recopiladas de plataformas de venta online. No son opiniones dejadas en esta tienda.
+            </p>
+          )}
+        </div>
+      </Container>
+    </section>
+  )
+}

@@ -1,0 +1,54 @@
+---
+import Legal from '@/layouts/Legal.astro';
+import { legal, orPending } from '@/data/legal';
+import { policy, shippingLine } from '@/lib/policy';
+
+const { identity } = legal;
+// Was product.shipping.etaLabel — a delivery promise written as product copy.
+// A legal page stating a delivery term it read from marketing is the exact
+// shape of claim this layer exists to stop. `null` in preview: the section
+// below says the term is pending configuration rather than inventing one.
+const eta = policy ? shippingLine(policy).replace('Envío de ', '') : null;
+---
+
+<Legal title="Envíos y entregas" description="Plazos, costes y cobertura de los envíos.">
+  <h2>1. Dónde enviamos</h2>
+  <p>
+    Enviamos únicamente a direcciones de <strong>España</strong>. No realizamos envíos internacionales.
+  </p>
+
+  <h2>2. Coste</h2>
+  <p>
+    El <strong>envío es gratuito</strong> en todos los pedidos, sin importe mínimo. El precio que ves en el resumen
+    antes de pagar es el precio final.
+  </p>
+
+  <h2>3. Plazo de entrega</h2>
+  <p>
+    El plazo estimado es de <strong>{eta}</strong> desde la confirmación del pedido.
+  </p>
+  <p>
+    Los plazos son <strong>estimativos</strong>. Pueden verse afectados por periodos de alta demanda, incidencias del
+    transportista o causas de fuerza mayor. Si prevemos un retraso significativo te avisaremos por email.
+  </p>
+
+  <h2>4. Seguimiento</h2>
+  <p>
+    Recibirás un email al confirmar el pedido y otro cuando salga. Si dispones de número de seguimiento, te lo
+    facilitaremos en ese segundo email.
+  </p>
+
+  <h2>5. Datos de entrega</h2>
+  <p>
+    Revisa bien tu dirección antes de confirmar. Una dirección incompleta o incorrecta puede retrasar la entrega o
+    provocar la devolución del paquete. El teléfono es opcional, pero facilitarlo ayuda al transportista a contactarte y
+    reduce las entregas fallidas.
+  </p>
+
+  <h2>6. Incidencias</h2>
+  <p>
+    Si tu pedido no llega en el plazo previsto, llega dañado o no es el producto correcto, escríbenos a
+    {identity.email ? <a href={`mailto:${identity.email}`}>{identity.email}</a> : orPending(null)} con tu número de pedido. Consulta también
+    <a href="/legal/devoluciones">devoluciones y desistimiento</a>.
+  </p>
+</Legal>

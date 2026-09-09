@@ -1,0 +1,120 @@
+---
+import Legal from '@/layouts/Legal.astro';
+import { legal, orPending } from '@/data/legal';
+import { product } from '@/data/product';
+import { policy, shippingLine } from '@/lib/policy';
+
+const { identity } = legal;
+
+// THE TERRITORY AND THE JURISDICTION ARE THE MERCHANT'S, not literals. This
+// page named one country three times while `merchant.country` travelled to
+// every landing and was rendered by nobody — so an operator selling from
+// anywhere else published someone else's jurisdiction as their binding terms.
+const country = orPending(identity.country);
+
+// AND THE FREE-SHIPPING PROMISE IS A CONFIGURED FACT. "El envío es gratuito"
+// sat hardcoded in the price clause of a binding document, so a merchant who
+// offers no such thing promised it in their own terms of sale.
+// `freeOverCents` is the merchant's threshold carried through the assembler:
+// 0 means every order, a positive number means above that amount, and null
+// means none is offered — in which case the clause states the plain truth.
+const freeOver = product.shipping.freeOverCents;
+const shippingCostLine =
+  freeOver === null
+    ? 'Los gastos de envío, cuando existan, se muestran antes de confirmar el pedido.'
+    : freeOver === 0
+      ? 'El <strong>envío es gratuito</strong>; no se añade ningún coste al finalizar la compra.'
+      : `El <strong>envío es gratuito</strong> a partir de ${(freeOver / 100).toFixed(2).replace('.', ',')} €; por debajo de ese importe se muestra el coste antes de confirmar.`;
+// See cookies.astro — the domain is the landing's, never the template's.
+const siteLabel = Astro.site?.host ?? 'este sitio web';
+const commercialGuaranteeDays = policy?.commercialGuarantee?.days ?? null;
+const eta = policy ? shippingLine(policy).replace('Envío de ', '') : null;
+---
+
+<Legal
+  title="Términos y condiciones"
+  description="Condiciones generales de contratación: pedidos, precios, pago, entrega y garantías."
+>
+  <p>
+    Estas condiciones regulan la compra de productos en {siteLabel}, titularidad de {orPending(identity.holder)}. Al realizar
+    un pedido aceptas estas condiciones en su versión vigente en ese momento.
+  </p>
+
+  <h2>1. Ámbito</h2>
+  <p>
+    Vendemos exclusivamente a consumidores mayores de 18 años con dirección de entrega en <strong>{country}</strong>. No
+    realizamos envíos fuera de ese territorio.
+  </p>
+
+  <h2>2. Proceso de compra</h2>
+  <ol>
+    <li>Eliges el producto y la variante que quieres.</li>
+    <li>Introduces tus datos de envío y contacto.</li>
+    <li>Realizas el pago con tarjeta, Apple Pay o Google Pay.</li>
+    <li>Recibes la confirmación del pedido por email.</li>
+  </ol>
+  <p>
+    El contrato se entiende perfeccionado en el momento en que recibes el email de confirmación. Conservamos constancia
+    electrónica del pedido y puedes solicitárnosla cuando quieras.
+  </p>
+
+  <h2>3. Precios y pago</h2>
+  <ul>
+    <li>Todos los precios se muestran en <strong>euros (EUR)</strong> e <strong>incluyen el IVA</strong> aplicable.</li>
+    <li set:html={shippingCostLine} />
+    <li>El importe total que verás antes de pagar es el importe final.</li>
+    <li>El pago se procesa a través de <strong>SumUp</strong>. No almacenamos datos de tarjeta.</li>
+  </ul>
+  <p>
+    Si detectamos un error tipográfico evidente en un precio, te lo comunicaremos antes de tramitar el pedido y podrás
+    confirmarlo al precio correcto o cancelarlo sin coste.
+  </p>
+
+  <h2>4. Disponibilidad y entrega</h2>
+  <p>
+    {eta
+      ? <Fragment>El plazo estimado de entrega es de <strong>{eta}</strong> desde la confirmación del pedido.</Fragment>
+      : <Fragment>El plazo estimado de entrega se indicará antes de confirmar el pedido.</Fragment>} Los plazos son estimativos y pueden variar por causas ajenas a nuestra voluntad. Si un
+    producto no estuviera disponible, te lo comunicaremos y te reembolsaremos el importe íntegro.
+  </p>
+  <p>Más información en <a href="/legal/envios">envíos y entregas</a>.</p>
+
+  <h2>5. Desistimiento y devoluciones</h2>
+  <p>
+    Dispones de <strong>{legal.withdrawalDays} días naturales</strong> desde la recepción para desistir de la compra sin
+    justificación, conforme al Real Decreto Legislativo 1/2007.{' '}
+    {/* The additional commercial guarantee is stated ONLY when configured. The
+        statutory withdrawal period above is a right and is unaffected either
+        way — the two must never be presented as one promise. */}
+    {commercialGuaranteeDays !== null && (
+      <Fragment>
+        Adicionalmente ofrecemos una <strong>garantía de satisfacción de {commercialGuaranteeDays} días</strong>, que
+        amplía voluntariamente ese plazo legal.
+      </Fragment>
+    )}
+  </p>
+  <p>Consulta el procedimiento completo en <a href="/legal/devoluciones">devoluciones y desistimiento</a>.</p>
+
+  <h2>6. Garantía legal</h2>
+  <p>
+    Los productos cuentan con la garantía legal de conformidad de <strong>tres años</strong> desde la entrega, prevista
+    en el Real Decreto Legislativo 1/2007. Si el producto presenta una falta de conformidad, tienes derecho a su
+    reparación o sustitución y, en su caso, a la rebaja del precio o a la resolución del contrato.
+  </p>
+
+  <h2>7. Atención al cliente y reclamaciones</h2>
+  <p>
+    Escríbenos a {identity.email ? <a href={`mailto:${identity.email}`}>{identity.email}</a> : orPending(null)}. Atendemos en español y respondemos lo antes
+    posible.
+  </p>
+  <p>
+    Como consumidor puedes acudir a la plataforma de resolución de litigios en línea de la Comisión Europea:
+    <a href="https://ec.europa.eu/consumers/odr" rel="noopener noreferrer" target="_blank">ec.europa.eu/consumers/odr</a>.
+  </p>
+
+  <h2>8. Legislación aplicable</h2>
+  <p>
+    Estas condiciones se rigen por la legislación de <strong>{country}</strong>. En caso de controversia serán competentes los juzgados y
+    tribunales del domicilio del consumidor.
+  </p>
+</Legal>
