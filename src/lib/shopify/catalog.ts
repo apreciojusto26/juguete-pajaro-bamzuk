@@ -27,11 +27,12 @@ interface ProductQueryResponse {
 }
 
 /**
- * Shopify's own variant titles ("1 Random Slides", "6 Slides", "24 Slides")
- * are supplier language. Buyers do not shop for "slides" — they shop for how
- * many scenes the thing projects, so the count is parsed here and the visible
- * title rewritten ONCE, at the boundary. Every surface that shows a variant
- * (buy box, sticky bar, cart drawer, checkout summary) inherits it.
+ * Supplier variant titles are rewritten ONCE at the catalog boundary. Every
+ * surface that shows a variant (buy box, sticky bar, cart drawer, checkout
+ * summary) inherits the customer-facing label.
+ *
+ * Projection-count support remains for template compatibility; product-
+ * specific word mappings are handled by toCustomerVariantLabel().
  */
 export function parseProjectionCount(shopifyTitle: string): number | null {
   const match = /^\s*(\d+)\b/.exec(shopifyTitle);
@@ -41,8 +42,33 @@ export function parseProjectionCount(shopifyTitle: string): number | null {
 }
 
 export function toCustomerTitle(shopifyTitle: string, count: number | null): string {
-  if (count === null) return shopifyTitle;
+  if (count === null) return toCustomerVariantLabel(shopifyTitle);
   return `${count} ${count === 1 ? 'proyección' : 'proyecciones'}`;
+}
+
+/**
+ * Supplier variant copy is normalized once at the catalog boundary. Keep the
+ * mapping deliberately narrow: an unknown Shopify value is factual catalog
+ * data and must pass through unchanged rather than being guessed at.
+ */
+export function toCustomerVariantLabel(shopifyLabel: string): string {
+  const lookupKey = shopifyLabel
+    .trim()
+    .replace(/\s*\/\s*/g, ' / ')
+    .replace(/\s+/g, ' ')
+    .toLocaleLowerCase('en-US');
+
+  if (lookupKey === 'sparrow / china mainland') return 'Gorrión';
+  return shopifyLabel;
+}
+
+/**
+ * Shopify remains authoritative for commerce facts, but its SEO-oriented
+ * product title is not customer-facing copy. The curated display identity is
+ * returned here so every commerce surface receives the same short name.
+ */
+export function customerFacingProductTitle(_shopifyTitle: string): string {
+  return generatedProduct.displayName;
 }
 
 /**
@@ -198,7 +224,7 @@ async function fetchProductCommerce(): Promise<ProductCommerce> {
       id: node.id,
       title: toCustomerTitle(node.title, projectionCount),
       projectionCount,
-      optionValue,
+      optionValue: toCustomerVariantLabel(optionValue),
       availableForSale: node.availableForSale,
       unitPriceCents: moneyToCents(node.price.amount),
       unitCompareAtCents: node.compareAtPrice ? moneyToCents(node.compareAtPrice.amount) : null,
@@ -214,7 +240,7 @@ async function fetchProductCommerce(): Promise<ProductCommerce> {
 
   return {
     handle: product.handle,
-    title: product.title,
+    title: customerFacingProductTitle(product.title),
     currencyCode: 'EUR',
     optionName: product.options[0]?.name ?? '',
     variants,

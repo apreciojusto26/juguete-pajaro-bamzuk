@@ -67,7 +67,7 @@ export interface PricePack {
   freeUnits: number; // 2+1 GRATIS -> units:2, freeUnits:1
   label: string; // 'Pack 2 + 1 GRATIS'
   sublabel?: string; // 'El que más se lleva'
-  discountPercent?: number; // applied to the Shopify-derived unit total; never a hardcoded price
+  discountPercent?: number; // projected from Shopify unit price only while bundleOfferActive is true
   badge?: string; // 'Más popular'
   popular?: boolean; // drives ribbon + default border emphasis
   freeGift?: boolean; // toggles the gift progress bar to 100%
@@ -173,9 +173,9 @@ export interface ProductContent {
    */
   name: string;
   /**
-   * The same title, narrowed for display. Every word of it appears in `name`,
-   * in order — derived by scripts/lib/display-name.mjs, never written by a
-   * model.
+   * The concise customer-facing identity used across the interface. This is
+   * curated marketing copy; `name` preserves the longer source/listing title
+   * separately for provenance and analytics.
    */
   displayName: string;
   tagline: string;
@@ -272,8 +272,8 @@ export interface ProductErrorCopy {
 }
 
 /**
- * ProductContent + the two things sourced outside marketing copy: the Shopify
- * handle to fetch at build time, and the BXGY merchandising claim flag.
+ * ProductContent + the Shopify handle and the launch gate for pack-offer
+ * claims. The gate covers both percentage discounts and free-unit/BXGY offers.
  */
 export type Product = ProductContent & {
   commerce: {

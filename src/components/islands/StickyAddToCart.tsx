@@ -62,7 +62,7 @@ export function StickyAddToCart({
   // hook order between preview and commerce builds.
   if (!selection) return null;
 
-  const { variant, projection, totalCents, cart } = selection;
+  const { variant, projection, totalCents, cart, cartMatchesSelection } = selection;
 
   const visible = pastSentinel && !isLightboxOpen && !dismissed;
   const isPending = cartStatus === 'creating' || cartStatus === 'updating' || cartStatus === 'restoring';
@@ -70,7 +70,7 @@ export function StickyAddToCart({
   // Mirror BundleSelector's decision logic so the sticky bar and buy box can
   // never disagree: checkout only when the live cart line matches the current
   // selection; otherwise add-to-cart (syncCartLine handles create/add/update).
-  const inSync = !!cart?.line && cart.line.variantId === variant.id && cart.line.quantity === projection.totalUnits;
+  const inSync = cartMatchesSelection;
 
   const handleClick = () => {
     if (cart?.line && inSync) {

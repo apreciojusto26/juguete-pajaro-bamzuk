@@ -3,7 +3,7 @@ import type { Product } from '@/types/content';
 export const product: Product = {
   brand: null,
   name: "Juguete Interactivo para Gatos, Pájaro Volador Recargable con Sonido y Movimiento (sin volar), con Catnip, Juguete de Peluche Activado por Tacto",
-  displayName: "Juguete Interactivo para Gatos",
+  displayName: "Pájaro Interactivo para Gatos",
   tagline: "Despertá el instinto cazador de tu gato, ¡sin que vuele de verdad!",
   subtagline: "Juguete recargable con sonido, movimiento de alas y catnip, para horas de diversión gatuna.",
 
@@ -14,13 +14,13 @@ export const product: Product = {
     bundleOfferActive: false,
   },
 
-  variantGroupLabel: "Color",
+  variantGroupLabel: "Modelo",
 
   errors: {
     network: "No pudimos conectar con la tienda. Probá de nuevo en unos segundos.",
     soldOut: "Esta variante está agotada por el momento.",
     expired: "Tu carrito expiró. Elegí tu opción de nuevo para continuar.",
-    noDiscount: "El total mostrado es el precio final calculado por la tienda.",
+    noDiscount: "El descuento no se pudo aplicar. El total mostrado es el importe final.",
     generic: "Algo salió mal. Probá de nuevo."
   },
 
@@ -49,12 +49,22 @@ export const product: Product = {
 
   packs: [
     {
+      id: "x1",
+      units: 1,
+      freeUnits: 0,
+      label: "1 unidad",
+      default: true,
+      popular: false,
+      freeGift: false
+    },
+    {
       id: "x2",
       units: 2,
       freeUnits: 0,
-      label: "Pack 2 unidades",
-      default: true,
-      popular: false,
+      label: "2 unidades",
+      discountPercent: 5,
+      default: false,
+      popular: true,
       freeGift: false
     }
   ],

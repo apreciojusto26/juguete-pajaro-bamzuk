@@ -4,7 +4,13 @@ import { $cartError, $cartStatus, checkout, syncCartLine } from '@/stores/cart';
 import { $selectedPackId, $selectedVariantId } from '@/stores/checkout';
 import { useSelection } from '@/components/islands/parts/use-selection';
 import { VariantPicker } from '@/components/islands/parts/VariantPicker';
-import { packDiscountBadge, packDisplayLabel, projectPack } from '@/lib/shopify/pricing';
+import {
+  packDiscountBadge,
+  packDisplayLabel,
+  packSelectorHeading,
+  projectPack,
+  shouldShowGiftProgress,
+} from '@/lib/shopify/pricing';
 import { formatPrice } from '@/lib/format';
 import { centsToUnits, trackEvent } from '@/lib/analytics';
 import type { ProductCommerce } from '@/lib/shopify/types';
@@ -60,11 +66,11 @@ export function BundleSelector({
     );
   }
 
-  const { variant, pack, projection, cart } = selection;
+  const { variant, pack, projection, totalCents, cart, cartMatchesSelection } = selection;
 
   const isPending = cartStatus === 'creating' || cartStatus === 'updating' || cartStatus === 'restoring';
   const soldOut = !variant.availableForSale;
-  const inSync = !!cart?.line && cart.line.variantId === variant.id && cart.line.quantity === projection.totalUnits;
+  const inSync = cartMatchesSelection;
 
   let ctaLabel = cta.primary;
   let ctaDisabled = false;
@@ -104,9 +110,17 @@ export function BundleSelector({
 
   const announcement = useMemo(() => {
     if (cartError) return errors[cartError] ?? errors.generic;
-    if (cart?.line && pack.freeUnits > 0 && cart.discountCents === 0) return errors.noDiscount;
-    return `${variant.title}. ${packDisplayLabel(pack, projection)}. Total: ${formatPrice(cart ? cart.totalCents : projection.priceCents)}.`;
-  }, [cartError, cart, pack, variant, projection, errors]);
+    if (
+      cart?.line &&
+      inSync &&
+      bundleOfferActive &&
+      (pack.freeUnits > 0 || (pack.discountPercent ?? 0) > 0) &&
+      cart.discountCents === 0
+    ) {
+      return errors.noDiscount;
+    }
+    return `${variant.title}. ${packDisplayLabel(pack, projection)}. Total: ${formatPrice(totalCents)}.`;
+  }, [cartError, cart, pack, variant, projection, totalCents, errors, bundleOfferActive, inSync]);
 
   const giftProgress = Math.min(1, pack.units / giftThresholdUnits);
   const projectionVariants = commerce.variants
@@ -129,7 +143,9 @@ export function BundleSelector({
 
       <div className="flex items-center gap-3" aria-hidden="true">
         <span className="h-px flex-1 bg-graphite/10" />
-        <span className="text-[0.6875rem] font-bold uppercase tracking-widest text-grape">Compra más y ahorra</span>
+        <span className="text-[0.6875rem] font-bold uppercase tracking-widest text-grape">
+          {packSelectorHeading(bundleOfferActive)}
+        </span>
         <span className="h-px flex-1 bg-graphite/10" />
       </div>
 
@@ -138,10 +154,10 @@ export function BundleSelector({
           const checked = p.id === pack.id;
           const pProjection = projectPack(variant, p, bundleOfferActive);
           const quantity = pProjection.totalUnits;
-          const authoritativeTotalCents = checked && cart?.line && inSync ? cart.totalCents : null;
-          const discountBadge = packDiscountBadge(p, pProjection, authoritativeTotalCents);
-          const badge = p.discountPercent ? discountBadge : p.badge;
-          const displayPriceCents = authoritativeTotalCents ?? pProjection.priceCents;
+          const authoritativeCart = checked && inSync ? cart : null;
+          const discountBadge = packDiscountBadge(p, pProjection, authoritativeCart, bundleOfferActive);
+          const badge = bundleOfferActive ? (p.discountPercent ? discountBadge : p.badge) : null;
+          const displayPriceCents = authoritativeCart?.totalCents ?? pProjection.priceCents;
           const savingsCents = Math.max(0, oneUnitPriceCents * quantity - displayPriceCents);
 
           return (
@@ -188,7 +204,7 @@ export function BundleSelector({
         })}
       </div>
 
-      {bundleOfferActive && (
+      {shouldShowGiftProgress(pack, bundleOfferActive) && (
         <div>
           <div className="flex items-center justify-between text-xs font-medium text-steel">
             <span>{giftLabel}</span>

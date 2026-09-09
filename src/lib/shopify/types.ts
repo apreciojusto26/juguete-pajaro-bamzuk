@@ -24,9 +24,8 @@ export interface VariantOption {
 
 export interface ProductCommerce {
   handle: string;
-  title: string; // buy box <h2>. In commerce mode: Shopify's own configured
-  // title, verbatim (Shopify is the sole authority once linked). In preview:
-  // generatedProduct.displayName, never the raw source title (catalog.ts).
+  title: string; // customer-facing display identity (catalog.ts); Shopify's
+  // raw SEO title is deliberately not exposed as interface copy.
   currencyCode: 'EUR'; // asserted at build
   optionName: string; // 'Emitting Color' (mislabeled in admin — see copy note)
   variants: VariantOption[]; // Shopify admin order PRESERVED

@@ -45,19 +45,28 @@ the endpoint only triggers a rebuild and trusts no payload content (the
 rebuild re-queries Shopify itself). Worst case from a leaked URL is rebuild
 spam; Vercel dedupes concurrent builds.
 
-## Flipping `bundleOfferActive`
+## Two-unit discount
 
-`src/data/product.ts` → `commerce.bundleOfferActive` currently ships `false`
-because the BXGY ("2 + 1 gratis") discount rule is **not yet configured** in
-Shopify admin. While it's `false`, pack cards show quantity only (no "GRATIS"
-badge, no savings claim) and the cart is charged full price for every unit —
-this is intentional so the UI never promises a discount Shopify won't apply.
+`src/data/product.ts` declares a `5%` merchandising discount for the two-unit
+pack, but `commerce.bundleOfferActive` remains `false` until the matching
+automatic quantity discount exists and has been verified in Shopify Admin.
+While the gate is off, both quantity options remain available, but the landing
+shows the full Shopify unit total: no discount badge, savings copy or projected
+price reduction.
 
-**Pre-launch gate — do this before flipping to `true`:**
+**Activation gate:**
 
-1. Configure the BXGY discount rule in Shopify Admin.
-2. Manually add a "2 + 1 gratis" pack to a real cart and inspect the Storefront
-   API response: confirm `cart.cost.totalAmount` reflects the discount (i.e.
-   `discountAllocations` is non-empty / `discountCents > 0`).
-3. Only once that's observed, flip `bundleOfferActive: true` in
-   `src/data/product.ts` and redeploy (one-line commit).
+1. Configure the automatic 5% discount for quantity 2 in Shopify Admin.
+2. Add two units to a real cart and verify that `cart.cost.totalAmount` and
+   `discountAllocations` contain the expected discount.
+3. Change `commerce.bundleOfferActive` to `true` and redeploy.
+
+With the gate active, the initial card price is a projection from Shopify's
+current unit price; no custom checkout price is created or sent to Shopify.
+Once the exact selected variant and quantity exist in a cart,
+`cart.cost.totalAmount` is authoritative. The UI replaces the projection with
+that total and hides the discount badge if Shopify does not confirm it.
+
+The legacy gift/BXGY progress UI additionally requires `freeUnits > 0`.
+Therefore this percentage-only offer never shows "2 + 1 gratis" or gift
+progress, even after `bundleOfferActive` is enabled.

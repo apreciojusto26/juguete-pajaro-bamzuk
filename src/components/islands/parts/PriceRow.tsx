@@ -13,9 +13,9 @@ interface PriceRowProps {
  * ONLY source of truth. Savings pill logic (design's PriceRow spec):
  *  - no cart:   show pill when projection.savingsCents > 0
  *  - with cart: show pill when cart.discountCents > 0
- *  - with cart, pack.freeUnits > 0, discountCents === 0: NO pill — the
- *    un-configured-BXGY state is surfaced via the shared aria-live region
- *    in BundleSelector, not here.
+ *  - with cart, a configured offer but discountCents === 0: NO pill — the
+ *    unapplied-discount state is surfaced via the shared aria-live region in
+ *    BundleSelector, not here.
  */
 export function PriceRow({ projection, cart }: PriceRowProps) {
   const totalCents = cart ? cart.totalCents : projection.priceCents;

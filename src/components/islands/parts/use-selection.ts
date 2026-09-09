@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { $cart, pruneStaleLine } from '@/stores/cart';
 import { $selectedPackId, $selectedVariantId } from '@/stores/checkout';
-import { projectPack } from '@/lib/shopify/pricing';
+import { isCartSelectionMatch, projectPack, resolveSelectionTotalCents } from '@/lib/shopify/pricing';
 import type { ProductCommerce, VariantOption } from '@/lib/shopify/types';
 import type { PricePack } from '@/types/content';
 
@@ -18,6 +18,7 @@ interface Selection {
   projection: ReturnType<typeof projectPack>;
   totalCents: number;
   cart: ReturnType<typeof $cart.get>;
+  cartMatchesSelection: boolean;
 }
 
 let prunedOnce = false;
@@ -83,7 +84,8 @@ export function useSelection({ commerce, packs, bundleOfferActive }: UseSelectio
   const pack = packs.find((p) => p.id === selectedPackId) ?? defaultPack;
 
   const projection = projectPack(variant, pack, bundleOfferActive);
-  const totalCents = cart ? cart.totalCents : projection.priceCents;
+  const cartMatchesSelection = isCartSelectionMatch(cart, variant.id, projection.totalUnits);
+  const totalCents = resolveSelectionTotalCents(cart, variant.id, projection);
 
-  return { variant, pack, projection, totalCents, cart };
+  return { variant, pack, projection, totalCents, cart, cartMatchesSelection };
 }

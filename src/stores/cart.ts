@@ -1,6 +1,7 @@
 import { atom } from 'nanostores';
 import { cartCreate, cartGet, cartLinesAdd, cartLinesUpdate } from '@/lib/shopify/cart';
 import type { CartSnapshot } from '@/lib/shopify/types';
+import { findPackByTotalQuantity } from '@/lib/shopify/pricing';
 import { product } from '@/data/product';
 import { $selectedPackId, $selectedVariantId } from '@/stores/checkout';
 import type { PricePack } from '@/types/content';
@@ -228,7 +229,7 @@ async function restore(): Promise<void> {
     if (snapshot.line) {
       $selectedVariantId.set(snapshot.line.variantId);
       const packs = product.packs as unknown as PricePack[];
-      const matchingPack = packs.find((p) => p.units + p.freeUnits === snapshot.line!.quantity);
+      const matchingPack = findPackByTotalQuantity(packs, snapshot.line.quantity);
       if (matchingPack) $selectedPackId.set(matchingPack.id);
     }
 
